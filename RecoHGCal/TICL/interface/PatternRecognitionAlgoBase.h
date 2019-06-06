@@ -10,6 +10,14 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "RecoHGCal/TICL/interface/Common.h"
 #include "RecoHGCal/TICL/interface/Trackster.h"
+///
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+///
+
+
+
 
 namespace edm {
 class Event;
@@ -25,6 +33,10 @@ namespace ticl {
 
       virtual void makeTracksters(const edm::Event& ev, const edm::EventSetup& es,
           const std::vector<reco::CaloCluster>& layerClusters,
+	  ///
+	  const edm::Handle<std::vector<reco::CaloCluster>> &cluster_h,
+          const edm::ValueMap<float> &TwoDTime,
+	  ///
           const HgcalClusterFilterMask& mask,
           std::vector<Trackster>& result) = 0;
       enum VerbosityLevel { None = 0, Basic, Advanced, Expert, Guru };

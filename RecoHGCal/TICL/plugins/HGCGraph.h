@@ -8,11 +8,23 @@
 #include "PatternRecognitionbyCAConstants.h"
 #include "HGCDoublet.h"
 
+///
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+///
+
+
 class HGCGraph {
  public:
   void makeAndConnectDoublets(const ticl::patternbyca::Tile &h,
                               int nEtaBins, int nPhiBins,
-                              const std::vector<reco::CaloCluster> &layerClusters, int deltaIEta,
+                              const std::vector<reco::CaloCluster> &layerClusters,
+                              ///
+			      const edm::Handle<std::vector<reco::CaloCluster>> &cluster_h,
+                              const edm::ValueMap<float> &TwoDTime,
+			      ///
+			      int deltaIEta,
                               int deltaIPhi, float minCosThetai, float maxCosPointing,
                               int missing_layers, int maxNumberOfLayers);
 

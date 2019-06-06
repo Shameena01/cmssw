@@ -13,6 +13,15 @@
 #include "RecoHGCal/TICL/interface/Common.h"
 #include "RecoLocalCalo/HGCalRecAlgos/interface/RecHitTools.h"
 
+///
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+///
+
+
+
+
 namespace ticl {
   class PatternRecognitionbyCA final : public PatternRecognitionAlgoBase {
     public:
@@ -28,6 +37,10 @@ namespace ticl {
 
       void makeTracksters(const edm::Event& ev, const edm::EventSetup& es,
           const std::vector<reco::CaloCluster>& layerClusters,
+	  ///
+	  const edm::Handle<std::vector<reco::CaloCluster>> &cluster_h,
+	  const edm::ValueMap<float> &TwoDTime,
+	  ///
           const HgcalClusterFilterMask& mask,
           std::vector<Trackster>& result) override;
 

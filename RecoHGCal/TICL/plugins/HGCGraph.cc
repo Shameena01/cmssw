@@ -7,9 +7,20 @@
 #include "HGCDoublet.h"
 #include "HGCGraph.h"
 
+///
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+///
+
 void HGCGraph::makeAndConnectDoublets(const ticl::patternbyca::Tile & histo,
                                       int nEtaBins, int nPhiBins,
                                       const std::vector<reco::CaloCluster> &layerClusters,
+                                      ///
+				      
+                                      const edm::Handle<std::vector<reco::CaloCluster>> &cluster_h,
+                                      const edm::ValueMap<float> &TwoDTime,
+				      ///
                                       int deltaIEta, int deltaIPhi, float minCosTheta,
                                       float minCosPointing, int missing_layers, int maxNumberOfLayers) {
   isOuterClusterOfDoublets_.clear();
@@ -44,8 +55,35 @@ void HGCGraph::makeAndConnectDoublets(const ticl::patternbyca::Tile & histo,
                   auto iphi = ((ophi + phiRange - deltaIPhi) % nPhiBins + nPhiBins) % nPhiBins;
                   for (auto innerClusterId : innerLayerHisto[ieta * nPhiBins + iphi]) {
                     auto doubletId = allDoublets_.size();
-                    allDoublets_.emplace_back(innerClusterId, outerClusterId, doubletId,
-                                              &layerClusters);
+                    
+		    ///
+
+		    //                    int isInTime=1;
+		    //reco::CaloClusterPtr TwoDClPtrInner(cluster_h,innerClusterId);
+                    //float timeVal_inner = (TwoDTime)[TwoDClPtrInner];
+
+		    //reco::CaloClusterPtr TwoDClPtrOuter(cluster_h,outerClusterId);
+                    //float timeVal_outer = (TwoDTime)[TwoDClPtrOuter];
+
+                    //if (timeVal_inner==-99){
+		    //isInTime=2;
+                    //}
+                    //else if (timeVal_outer==-99){
+		    //isInTime=2;
+                    //}
+                    //else if ((timeVal_inner > (timeVal_outer-0.09))&&(timeVal_inner < (timeVal_outer+0.09))){
+		    //isInTime=2;
+                    //}
+                    ///
+
+
+                    ///
+		    //if(isInTime==1){continue;}
+                      ///
+
+                    allDoublets_.emplace_back(innerClusterId, outerClusterId, doubletId,&layerClusters);
+		    
+		    ///
                     if (verbosity_ > Advanced) {
                       LogDebug("HGCGraph")
                           << "Creating doubletsId: " << doubletId << " layerLink in-out: ["

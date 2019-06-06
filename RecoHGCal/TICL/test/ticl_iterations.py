@@ -22,12 +22,14 @@ def TICL_iterations_withReco(process):
   process.FilteredLayerClustersMIP = filteredLayerClustersProducer.clone(
       clusterFilter = "ClusterFilterBySize",
       algo_number = 8,
+     
       max_cluster_size = 2, # inclusive
       iteration_label = "MIP"
   )
 
   process.TrackstersMIP = trackstersProducer.clone(
       filtered_mask = cms.InputTag("FilteredLayerClustersMIP", "MIP"),
+      time_LayerCluster = cms.InputTag("hgcalLayerClusters","timeLayerCluster"),
       missing_layers = 3,
       min_clusters_per_ntuplet = 15,
       min_cos_theta = 0.99, # ~10 degrees
@@ -42,12 +44,14 @@ def TICL_iterations_withReco(process):
   process.FilteredLayerClusters = filteredLayerClustersProducer.clone(
       algo_number = 8,
       iteration_label = "algo8",
-      LayerClustersInputMask = "TrackstersMIP"
+      LayerClustersInputMask = "TrackstersMIP",
+     
   )
 
   process.Tracksters = trackstersProducer.clone(
       original_mask = "TrackstersMIP",
       filtered_mask = cms.InputTag("FilteredLayerClusters", "algo8"),
+      time_LayerCluster = cms.InputTag("hgcalLayerClusters","timeLayerCluster"),
       missing_layers = 2,
       min_clusters_per_ntuplet = 15,
       min_cos_theta = 0.94, # ~20 degrees
@@ -56,17 +60,18 @@ def TICL_iterations_withReco(process):
 
   process.MultiClustersFromTracksters = multiClustersFromTrackstersProducer.clone(
       Tracksters = "Tracksters"
+      
   )
 
   process.hgcalMultiClusters = hgcalMultiClusters
   process.TICL_Task = cms.Task(
       process.FilteredLayerClustersMIP,
-      process.TrackstersMIP,
+      process.Tracksters,
       process.MultiClustersFromTrackstersMIP,
       process.FilteredLayerClusters,
-      process.Tracksters,
+      process.TrackstersMIP,
       process.MultiClustersFromTracksters)
-  process.schedule.associate(process.TICL_Task)
+  process.TICL = cms.Path(process.TICL_Task)
   return process
 
 def TICL_iterations(process):
@@ -81,6 +86,7 @@ def TICL_iterations(process):
 
   process.TrackstersMIP = trackstersProducer.clone(
       filtered_mask = cms.InputTag("FilteredLayerClustersMIP", "MIP"),
+      time_LayerCluster = cms.InputTag("hgcalLayerClusters","timeLayerCluster"),
       missing_layers = 3,
       min_clusters_per_ntuplet = 15,
       min_cos_theta = 0.985 # ~10 degrees
@@ -88,16 +94,19 @@ def TICL_iterations(process):
 
   process.MultiClustersFromTrackstersMIP = multiClustersFromTrackstersProducer.clone(
       label = "MIPMultiClustersFromTracksterByCA",
+      
       Tracksters = "TrackstersMIP"
   )
 
   process.FilteredLayerClusters = filteredLayerClustersProducer.clone(
+      
       algo_number = 8,
       iteration_label = "algo8"
   )
 
   process.Tracksters = trackstersProducer.clone(
       original_mask = "TrackstersMIP",
+      time_LayerCluster = cms.InputTag("hgcalLayerClusters","timeLayerCluster"),
       filtered_mask = cms.InputTag("FilteredLayerClusters", "algo8"),
       missing_layers = 2,
       min_clusters_per_ntuplet = 15,
@@ -107,6 +116,7 @@ def TICL_iterations(process):
 
   process.MultiClustersFromTracksters = multiClustersFromTrackstersProducer.clone(
       Tracksters = "Tracksters"
+      
   )
 
   process.HGCalUncalibRecHit = HGCalUncalibRecHit

@@ -7,6 +7,15 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "PatternRecognitionbyCA.h"
 
+
+///
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/CaloRecHit/interface/CaloClusterFwd.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+///
+
+
+
 using namespace ticl;
 
 void PatternRecognitionbyCA::fillHistogram(
@@ -36,6 +45,10 @@ void PatternRecognitionbyCA::fillHistogram(
 
 void PatternRecognitionbyCA::makeTracksters(const edm::Event &ev, const edm::EventSetup &es,
                                             const std::vector<reco::CaloCluster> &layerClusters,
+                                            ///
+					    const edm::Handle<std::vector<reco::CaloCluster>> &cluster_h,
+                                            const edm::ValueMap<float> &TwoDTime,
+					    ///
                                             const HgcalClusterFilterMask &mask,
                                             std::vector<Trackster> &result) {
   rhtools_.getEventSetup(es);
@@ -48,7 +61,12 @@ void PatternRecognitionbyCA::makeTracksters(const edm::Event &ev, const edm::Eve
   }
   std::vector<HGCDoublet::HGCntuplet> foundNtuplets;
   fillHistogram(layerClusters, mask);
-  theGraph_.makeAndConnectDoublets(tile_, patternbyca::nEtaBins, patternbyca::nPhiBins, layerClusters, 2, 2,
+  theGraph_.makeAndConnectDoublets(tile_, patternbyca::nEtaBins, patternbyca::nPhiBins, layerClusters,
+                                   ///
+                                   cluster_h,
+				   TwoDTime,
+				   ///
+                                   2, 2,
                                    min_cos_theta_, min_cos_pointing_, missing_layers_,
                                    rhtools_.lastLayerFH());
   theGraph_.findNtuplets(foundNtuplets, min_clusters_per_ntuplet_);
